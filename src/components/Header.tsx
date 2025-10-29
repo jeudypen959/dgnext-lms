@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Moon, Sun, Globe } from 'lucide-react';
+import { Menu, X, Moon, Sun, Globe, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { useAuth } from '@/contexts/AuthContext';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,13 +18,15 @@ const Header = () => {
   const location = useLocation();
   const { language, setLanguage, t } = useLanguage();
   const { theme, setTheme } = useTheme();
+  const { user } = useAuth();
 
   const navItems = [
     { path: '/', label: t('home') },
     { path: '/courses', label: t('courses') },
     { path: '/about', label: t('about') },
+    { path: '/trainer', label: 'Trainers' },
     { path: '/contact', label: t('contact') },
-    { path: '/dashboard', label: t('dashboard') },
+    ...(user ? [{ path: '/dashboard', label: t('dashboard') }] : []),
   ];
 
   const isActive = (path: string) => location.pathname === path;
@@ -55,6 +59,35 @@ const Header = () => {
 
           {/* Right Side Actions */}
           <div className="flex items-center space-x-2">
+            {/* User Menu */}
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="rounded-full">
+                    <Avatar className="h-8 w-8">
+                      <AvatarFallback className="bg-secondary text-secondary-foreground">
+                        <User className="h-4 w-4" />
+                      </AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="bg-popover z-50">
+                  <DropdownMenuItem asChild>
+                    <Link to="/profile" className="cursor-pointer">Profile</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/settings" className="cursor-pointer">Settings</Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Link to="/auth">
+                <Button className="bg-secondary hover:bg-secondary/90 text-secondary-foreground">
+                  Sign In
+                </Button>
+              </Link>
+            )}
+
             {/* Language Selector */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

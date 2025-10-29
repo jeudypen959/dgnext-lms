@@ -73,11 +73,12 @@ const CourseCard = ({
         
         <div className="flex items-center justify-between">
           <span className="text-sm text-muted-foreground">by {instructor}</span>
-          <Link to={`/courses/${id}`}>
-            <Button className="bg-secondary hover:bg-secondary/90 text-secondary-foreground">
-              {t('enrollNow')}
-            </Button>
-          </Link>
+          <Button 
+            onClick={() => window.location.href = `/courses/${id}`}
+            className="bg-secondary hover:bg-secondary/90 text-secondary-foreground"
+          >
+            {t('enrollNow')}
+          </Button>
         </div>
       </div>
     </Card>

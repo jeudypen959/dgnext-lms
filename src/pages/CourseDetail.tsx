@@ -136,7 +136,11 @@ const CourseDetail = () => {
                 />
                 <div className="p-6">
                   <div className="text-3xl font-bold text-secondary mb-4">{course.price}</div>
-                  <Button className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground mb-3" size="lg">
+                  <Button 
+                    className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground mb-3" 
+                    size="lg"
+                    onClick={() => window.location.href = `/checkout?course=${id}&title=${encodeURIComponent(course.title)}&price=${encodeURIComponent(course.price)}`}
+                  >
                     <Play className="mr-2 h-5 w-5" />
                     Enroll Now
                   </Button>

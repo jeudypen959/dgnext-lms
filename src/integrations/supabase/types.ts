@@ -14,7 +14,99 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      enrollments: {
+        Row: {
+          completed_lessons: number | null
+          course_id: string
+          enrolled_at: string | null
+          id: string
+          last_accessed: string | null
+          progress: number | null
+          user_id: string
+        }
+        Insert: {
+          completed_lessons?: number | null
+          course_id: string
+          enrolled_at?: string | null
+          id?: string
+          last_accessed?: string | null
+          progress?: number | null
+          user_id: string
+        }
+        Update: {
+          completed_lessons?: number | null
+          course_id?: string
+          enrolled_at?: string | null
+          id?: string
+          last_accessed?: string | null
+          progress?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      payments: {
+        Row: {
+          amount: number
+          course_id: string
+          created_at: string | null
+          id: string
+          payment_method: string | null
+          status: string | null
+          transaction_id: string | null
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          course_id: string
+          created_at?: string | null
+          id?: string
+          payment_method?: string | null
+          status?: string | null
+          transaction_id?: string | null
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          course_id?: string
+          created_at?: string | null
+          id?: string
+          payment_method?: string | null
+          status?: string | null
+          transaction_id?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string | null
+          full_name: string | null
+          id: string
+          role: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string | null
+          full_name?: string | null
+          id: string
+          role?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string | null
+          full_name?: string | null
+          id?: string
+          role?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
