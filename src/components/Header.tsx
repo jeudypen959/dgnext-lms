@@ -1,6 +1,7 @@
-import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Moon, Sun, Globe, User } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
+import { Menu, X, Moon, Sun, Globe, User, LogOut, Settings as SettingsIcon, BookOpen, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useAuth } from '@/contexts/AuthContext';
@@ -15,10 +16,38 @@ import { useTheme } from 'next-themes';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const location = useLocation();
+  const [isAdmin, setIsAdmin] = useState(false);
+  const location = useNavigate();
+  const navigate = useNavigate();
   const { language, setLanguage, t } = useLanguage();
   const { theme, setTheme } = useTheme();
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
+
+  useEffect(() => {
+    if (user) {
+      checkAdminStatus();
+    } else {
+      setIsAdmin(false);
+    }
+  }, [user]);
+
+  const checkAdminStatus = async () => {
+    if (!user) return;
+    
+    const { data } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', user.id)
+      .eq('role', 'admin')
+      .maybeSingle();
+
+    setIsAdmin(!!data);
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/');
+  };
 
   const navItems = [
     { path: '/', label: t('home') },
@@ -29,7 +58,10 @@ const Header = () => {
     ...(user ? [{ path: '/dashboard', label: t('dashboard') }] : []),
   ];
 
-  const isActive = (path: string) => location.pathname === path;
+  const isActive = (path: string) => {
+    const currentPath = window.location.pathname;
+    return currentPath === path;
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -73,10 +105,28 @@ const Header = () => {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="bg-popover z-50">
                   <DropdownMenuItem asChild>
-                    <Link to="/profile" className="cursor-pointer">Profile</Link>
+                    <Link to="/profile" className="cursor-pointer flex items-center">
+                      <User className="mr-2 h-4 w-4" />
+                      Profile
+                    </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link to="/settings" className="cursor-pointer">Settings</Link>
+                    <Link to="/settings" className="cursor-pointer flex items-center">
+                      <SettingsIcon className="mr-2 h-4 w-4" />
+                      Settings
+                    </Link>
+                  </DropdownMenuItem>
+                  {isAdmin && (
+                    <DropdownMenuItem asChild>
+                      <Link to="/admin" className="cursor-pointer flex items-center">
+                        <Shield className="mr-2 h-4 w-4" />
+                        Admin Dashboard
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
+                  <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer flex items-center">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Sign Out
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
